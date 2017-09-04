@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 //Class to control rubik's cube rotation
 public class RubikScript : MonoBehaviour 
@@ -13,26 +14,103 @@ public class RubikScript : MonoBehaviour
 	public GameObject pivotGreen;
 	public GameObject pivotRed;
 	public GameObject pivotOrange;
+
 	//Private Variables
 	private GameObject[] cubes;
     private GameObject pivot;
+	private bool rotating;
+	private bool stopShuffle;
+	private string method;
 	private int i;
+	private int j;
+	private Stack<char> movements;
 
     // Use this for initialisation
     void Start () 
 	{
         pivot = new GameObject("pivot");
-        //All cubes tagged as Cube
+		//All cubes tagged as Cube
         cubes = GameObject.FindGameObjectsWithTag("Cube");
 	}
 
-	//Rotate the right face
+	void ShuffleCube() {
+		if (j < 25) {
+			if (!rotating) {
+				switch (Random.Range (0, 11)) {
+				case 0:
+					pivot.transform.position = pivotBlue.transform.position;
+					method = "RotateBack";
+					InvokeRepeating (method, 0f, 0.0001f);
+					break;
+				case 1:
+					method = "RotateLeft";
+					pivot.transform.position = pivotRed.transform.position;
+					InvokeRepeating (method, 0f, 0.0001f);
+					break;
+				case 2:
+					method = "RotateRight";
+					pivot.transform.position = pivotRed.transform.position;
+					InvokeRepeating (method, 0f, 0.0001f);
+					break;
+				case 3:
+					method = "RotateLeft";
+					pivot.transform.position = pivotOrange.transform.position;
+					InvokeRepeating (method, 0f, 0.0001f);
+					break;
+				case 4:
+					method = "RotateRight";
+					pivot.transform.position = pivotOrange.transform.position;
+					InvokeRepeating (method, 0f, 0.0001f);
+					break;
+				case 5:
+					method = "RotateUp";
+					pivot.transform.position = pivotYellow.transform.position;
+					InvokeRepeating (method, 0f, 0.0001f);
+					break;
+				case 6:
+					method = "RotateDown";
+					pivot.transform.position = pivotYellow.transform.position;
+					InvokeRepeating (method, 0f, 0.0001f);
+					break;
+				case 7:
+					method = "RotateUp";
+					pivot.transform.position = pivotWhite.transform.position;
+					InvokeRepeating (method, 0f, 0.0001f);
+					break;
+				case 8:
+					method = "RotateDown";
+					pivot.transform.position = pivotWhite.transform.position;
+					InvokeRepeating (method, 0f, 0.0001f);
+					break;
+				case 9:
+					method = "RotateFront";
+					pivot.transform.position = pivotGreen.transform.position;
+					InvokeRepeating (method, 0f, 0.0001f);
+					break;
+				case 10:
+					method = "RotateFront";
+					pivot.transform.position = pivotBlue.transform.position;
+					InvokeRepeating (method, 0f, 0.0001f);
+					break;
+				case 11:
+					method = "RotateBack";
+					pivot.transform.position = pivotGreen.transform.position;
+					InvokeRepeating (method, 0f, 0.0001f);
+					break;
+				default:
+					break;
+				}
+				j++;
+			}
+		}
+	}
+		
 	void RotateRight()
     { 
+		rotating = true;
         foreach (GameObject cube in cubes)
 		{
-			if(cube.transform.position.y > Mathf.Floor(pivot.transform.position.y) && cube.transform.position.y < Mathf.Ceil(pivot.transform.position.y))
-			{
+			if(cube.transform.position.y > Mathf.Floor(pivot.transform.position.y) && cube.transform.position.y < Mathf.Ceil(pivot.transform.position.y)) {
 				cube.transform.parent = pivot.transform;
 			}
 		}
@@ -43,7 +121,8 @@ public class RubikScript : MonoBehaviour
     }
 
 	void RotateLeft()
-    {
+	{ 
+		rotating = true;
 		foreach (GameObject cube in cubes) {
 			if (cube.transform.position.y > Mathf.Floor(pivot.transform.position.y) && cube.transform.position.y < Mathf.Ceil(pivot.transform.position.y)) {
 				cube.transform.parent = pivot.transform;
@@ -56,7 +135,8 @@ public class RubikScript : MonoBehaviour
     }
 
     void RotateFront()
-    {
+	{ 
+		rotating = true;
 		foreach (GameObject cube in cubes) {
 			if (cube.transform.position.x > Mathf.Floor(pivot.transform.position.x) && cube.transform.position.x < Mathf.Ceil(pivot.transform.position.x)) {
 				cube.transform.parent = pivot.transform;
@@ -69,7 +149,8 @@ public class RubikScript : MonoBehaviour
     }
 
     void RotateBack()
-    {
+	{ 
+		rotating = true;
 		foreach (GameObject cube in cubes) {
 			if (cube.transform.position.x > Mathf.Floor(pivot.transform.position.x) && cube.transform.position.x < Mathf.Ceil(pivot.transform.position.x)) {
 				cube.transform.parent = pivot.transform;
@@ -83,7 +164,8 @@ public class RubikScript : MonoBehaviour
     }
 
     void RotateUp()
-    {
+	{ 
+		rotating = true;
 		foreach (GameObject cube in cubes) {
 			if (cube.transform.position.z > Mathf.Floor(pivot.transform.position.z) && cube.transform.position.z < Mathf.Ceil(pivot.transform.position.z)) {
 				cube.transform.parent = pivot.transform;
@@ -96,7 +178,8 @@ public class RubikScript : MonoBehaviour
     }
 
     void RotateDown()
-    {
+	{ 
+		rotating = true;
 		foreach (GameObject cube in cubes) {
 			if (cube.transform.position.z > Mathf.Floor(pivot.transform.position.z) && cube.transform.position.z < Mathf.Ceil(pivot.transform.position.z)) {
 				cube.transform.parent = pivot.transform;
@@ -107,102 +190,75 @@ public class RubikScript : MonoBehaviour
 			i++;
 		}
     }
-
-    //Perform rotation gradually (To prove concept)
+		
     void Update()
 	{
-        if (Input.GetKeyDown("q"))
-		{
-			pivot.transform.position = pivotRed.transform.position;
-			InvokeRepeating ("RotateLeft", 0f, rotationSpeed);
-        }
-        else if (Input.GetKeyDown("w"))
-		{
-			pivot.transform.position = pivotRed.transform.position;
-			InvokeRepeating ("RotateRight", 0f, rotationSpeed);
-        }
-        else if (Input.GetKeyDown("z"))
-        {
-			pivot.transform.position = pivotOrange.transform.position;
-			InvokeRepeating ("RotateLeft", 0f, rotationSpeed);
-        }
-        else if (Input.GetKeyDown("x"))
-		{
-			pivot.transform.position = pivotOrange.transform.position;
-			InvokeRepeating ("RotateRight", 0f, rotationSpeed);
-        }
-        else if (Input.GetKeyDown("e"))
-        {
-			pivot.transform.position = pivotYellow.transform.position;
-			InvokeRepeating ("RotateUp", 0f, rotationSpeed);
-        }
-        else if (Input.GetKeyDown("r"))
-        {
-			pivot.transform.position = pivotYellow.transform.position;
-			InvokeRepeating ("RotateDown", 0f, rotationSpeed);
-        }
-        else if (Input.GetKeyDown("c"))
-        {
-			pivot.transform.position = pivotWhite.transform.position;
-			InvokeRepeating ("RotateUp", 0f, rotationSpeed);
-        }
-        else if (Input.GetKeyDown("v"))
-        {
-			pivot.transform.position = pivotWhite.transform.position;
-			InvokeRepeating ("RotateDown", 0f, rotationSpeed);
-        }
-        else if (Input.GetKeyDown("t"))
-        {
-			pivot.transform.position = pivotGreen.transform.position;
-			InvokeRepeating ("RotateFront", 0f, rotationSpeed);
-        }
-        else if (Input.GetKeyDown("b"))
-        {
-			pivot.transform.position = pivotBlue.transform.position;
-			InvokeRepeating ("RotateFront", 0f, rotationSpeed);
-        }
-        else if (Input.GetKeyDown("y"))
-        {
-			pivot.transform.position = pivotGreen.transform.position;
-			InvokeRepeating ("RotateBack", 0f, rotationSpeed);
-        }
-        else if (Input.GetKeyDown("n"))
-        {
-			pivot.transform.position = pivotBlue.transform.position;
-			InvokeRepeating ("RotateBack", 0f, rotationSpeed);
-        }
+		if (!rotating) {
+			if (Input.GetKeyDown ("q")) {
+				pivot.transform.position = pivotRed.transform.position;
+				method = "RotateLeft";
+				InvokeRepeating (method, 0f, rotationSpeed);
+			} else if (Input.GetKeyDown ("w")) {
+				pivot.transform.position = pivotRed.transform.position;
+				method = "RotateRight";
+				InvokeRepeating (method, 0f, rotationSpeed);
+			} else if (Input.GetKeyDown ("z")) {
+				pivot.transform.position = pivotOrange.transform.position;
+				method = "RotateLeft";
+				InvokeRepeating (method, 0f, rotationSpeed);
+			} else if (Input.GetKeyDown ("x")) {
+				method = "RotateRight";
+				pivot.transform.position = pivotOrange.transform.position;
+				InvokeRepeating (method, 0f, rotationSpeed);
+			} else if (Input.GetKeyDown ("e")) {
+				method = "RotateUp";
+				pivot.transform.position = pivotYellow.transform.position;
+				InvokeRepeating (method, 0f, rotationSpeed);
+			} else if (Input.GetKeyDown ("r")) {
+				method = "RotateDown";
+				pivot.transform.position = pivotYellow.transform.position;
+				InvokeRepeating (method, 0f, rotationSpeed);
+			} else if (Input.GetKeyDown ("c")) {
+				method = "RotateUp";
+				pivot.transform.position = pivotWhite.transform.position;
+				InvokeRepeating (method, 0f, rotationSpeed);
+			} else if (Input.GetKeyDown ("v")) {
+				method = "RotateDown";
+				pivot.transform.position = pivotWhite.transform.position;
+				InvokeRepeating (method, 0f, rotationSpeed);
+			} else if (Input.GetKeyDown ("t")) {
+				method = "RotateFront";
+				pivot.transform.position = pivotGreen.transform.position;
+				InvokeRepeating (method, 0f, rotationSpeed);
+			} else if (Input.GetKeyDown ("b")) {
+				method = "RotateFront";
+				pivot.transform.position = pivotBlue.transform.position;
+				InvokeRepeating (method, 0f, rotationSpeed);
+			} else if (Input.GetKeyDown ("y")) {
+				method = "RotateBack";
+				pivot.transform.position = pivotGreen.transform.position;
+				InvokeRepeating (method, 0f, rotationSpeed);
+			} else if (Input.GetKeyDown ("n")) {
+				method = "RotateBack";
+				pivot.transform.position = pivotBlue.transform.position;
+				InvokeRepeating (method, 0f, rotationSpeed);
+			} else if (Input.GetKeyDown ("o")) {
+				method = "ShuffleCube";
+				InvokeRepeating (method, 0f, 0.1f);
+			}
+		}
         foreach (var cube in cubes)
         {
             cube.transform.parent = rubix.transform;
         }
 		if (i >= 90) {
-			CancelInvoke ();
+			CancelInvoke (method);
+			rotating = false;
 			i = 0;
 		}
-        //rightPivot.transform.RotateAround(new Vector3(-12.64479f,-8.834972f,3.402084f),Vector3.forward,rotationSpeed*Time.deltaTime);
+		if (j >= 25) {
+			CancelInvoke ("ShuffleCube");
+			j = 0;
+		}
     }
-
-//	float i = 0.0f;
-//	while(i < 1.0f)
-//	{
-//		i += rotationSpeed;
-//		Quaternion rotation;
-//		switch(axisName)
-//		{
-//		case 'x':
-//			rotation = Quaternion.Euler(angle, 0, 0);
-//			break;
-//		case 'y':
-//			rotation = Quaternion.Euler(0, angle, 0);
-//			break;
-//		case 'z':
-//			rotation = Quaternion.Euler(0, 0, angle);
-//			break;
-//		default:
-//			rotation = Quaternion.Euler(0, 0, 0);
-//			break;
-//		}
-//		face.transform.rotation = Quaternion.Lerp(face.transform.rotation, rotation, i);
-//		yield return null;
-//	}
 }
