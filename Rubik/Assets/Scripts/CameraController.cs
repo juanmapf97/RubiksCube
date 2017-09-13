@@ -18,7 +18,7 @@ public class CameraController : MonoBehaviour {
         rotating = true;
         if (i < 90)
         {
-            playerCamera.transform.RotateAround(cubeCenter.transform.position, Vector3.up, 1);
+            playerCamera.transform.RotateAround(cubeCenter.transform.position, Vector3.down, 1);
             i++;
         }
     }
@@ -28,7 +28,7 @@ public class CameraController : MonoBehaviour {
         rotating = true;
         if (i < 90)
         {
-            playerCamera.transform.RotateAround(cubeCenter.transform.position, Vector3.down, 1);
+            playerCamera.transform.RotateAround(cubeCenter.transform.position, Vector3.up, 1);
             i++;
         }
     }
